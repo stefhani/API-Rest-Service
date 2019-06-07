@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-// @validate no me funciona?
+
 @RestController
 @RequestMapping("teachers")
 public class TeacherController {
