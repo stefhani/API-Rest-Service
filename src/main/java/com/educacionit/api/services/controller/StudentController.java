@@ -1,5 +1,9 @@
 package com.educacionit.api.services.controller;
 
+import com.mongodb.DB;
+import com.mongodb.MongoClient;
+import com.mongodb.gridfs.GridFS;
+import com.mongodb.gridfs.GridFSInputFile;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -10,6 +14,8 @@ import com.educacionit.api.services.beans.Message;
 import com.educacionit.api.services.entities.Student;
 import com.educacionit.api.services.repositories.IStudentRepository;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.List;
 
 @RestController
@@ -20,6 +26,7 @@ public class StudentController {
     @Autowired
     private IStudentRepository dao;
 
+    ////////////////////////////////////////////  CRUD   ////////////////////////////////////////////////////////////
 
     @RequestMapping (value="{id}", method = RequestMethod.GET, produces={MediaType.APPLICATION_JSON_VALUE})
     public ResponseEntity<?> findStudentById (@PathVariable("id") String id) {
@@ -100,8 +107,16 @@ public class StudentController {
     public ResponseEntity<?> save (@RequestBody Student data) {
 
         try {
-
-            this.dao.save (data);
+            // F: Femenino
+            if(data.getSexo().equals("F")){
+                this.dao.save (data);
+                this.savePhotoF();
+            }else{
+                // Caso contrario es M :Masculino
+                this.dao.save (data);
+                this.savePhotoM();
+            }
+            //this.dao.save (data);
 
         } catch (Exception e) {
 
@@ -110,6 +125,7 @@ public class StudentController {
 
         return ResponseEntity.noContent ().build ();
     }
+
 
     @RequestMapping (value="{id}", method = RequestMethod.PUT, consumes={MediaType.APPLICATION_JSON_VALUE},
             produces={MediaType.APPLICATION_JSON_VALUE})
@@ -146,5 +162,47 @@ public class StudentController {
 
             return ResponseEntity.noContent ().build ();
         }
+    }
+
+
+    //////////////////////////////   Function y Method independientes /////////////////////////
+    //save Photo M
+    private void savePhotoM() {
+        //Condicion para analizar el sexo : M
+        MongoClient mongo = new MongoClient("localhost", 27017);
+        DB db = mongo.getDB("services");
+        String newFileName = "Profile";
+        File imageMan = new File("D:\\java\\workspace\\MyProyects\\API-Rest-Services\\imagenes\\man.jpg");
+        GridFS gfsPhoto = new GridFS(db, "photo");
+        GridFSInputFile gfsFile = null;
+        try {
+            gfsFile = gfsPhoto.createFile(imageMan);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        gfsFile.setFilename(newFileName);
+        gfsFile.save();
+
+
+    }
+
+    //save Photo F
+    private void savePhotoF() {
+        //Condicion para analizar el sexo : M
+        MongoClient mongo = new MongoClient("localhost", 27017);
+        DB db = mongo.getDB("services");
+        String newFileName = "Profile";
+        File imageWoman = new File("D:\\java\\workspace\\MyProyects\\API-Rest-Services\\imagenes\\woman.jpg");
+        GridFS gfsPhoto = new GridFS(db, "photo");
+        GridFSInputFile gfsFile = null;
+        try {
+            gfsFile = gfsPhoto.createFile(imageWoman);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        gfsFile.setFilename(newFileName);
+        gfsFile.save();
+
+
     }
 }

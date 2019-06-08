@@ -37,18 +37,24 @@ public class Student implements Serializable {
 
     private String birthDate;
 
+    @NotNull
+    @NotEmpty
+    @Size (max = 10)
+    private String sexo;
+
 
     public Student () {
     }
 
     public Student (String name, String lastName, String email,
-                    String mobile, String birthDate) {
+                    String mobile, String birthDate, String sexo) {
 
         this.name = name;
         this.lastName = lastName;
         this.email = email;
         this.mobile = mobile;
         this.birthDate = birthDate;
+        this.sexo= sexo;
     }
 
 
@@ -110,5 +116,13 @@ public class Student implements Serializable {
     public void setBirthDate(String birthDate) {
 
         this.birthDate = birthDate;
+    }
+
+    public String getSexo() {
+        return sexo;
+    }
+
+    public void setSexo(String sexo) {
+        this.sexo = sexo;
     }
 }
